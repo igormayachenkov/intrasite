@@ -1,0 +1,19 @@
+{
+  "name": "intrasite",
+  "version": "1.0.0",
+  "description": "The opuntia framework test.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/igormayachenkov/intrasite.git"
+  },
+  "author": "Igor Mayachenkov",
+  "license": "MIT",
+  "dependencies": {
+    "opuntia": "0.8.4"
+  },
+  "directories": {},
+  "scripts": {
+    "start": "node index.js"
+  }
+}
