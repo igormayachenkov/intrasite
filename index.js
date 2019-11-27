@@ -1,6 +1,18 @@
 "use strict"
 const opuntia = require("opuntia");
 const ApiError = opuntia.error.ApiError;
+const Database  = require("./database.js");
+const info  	= require("./info.js");
+const scheme    = require("./scheme.js");
+
+
+global.config = {
+	DATABASE : {  
+		host: 	  "localhost",
+		user: 	  "root",
+		password: "223322" 
+	}
+};
 
 //-------------------------------------------------------------------------------------------------
 // DATA
@@ -118,12 +130,22 @@ var router = {
 
 // CREATE & START API SERVER
 var server = new opuntia.Server(router, {
-		PROTOCOL   			: 'http:',
-		port       			: 8080,
-		REQUEST_BODY_LIMIT	: 1024 
+		PROTOCOL   	: 'http:',
+		PORT       	: 8080
 	}
 );
-server.listen(function(){
+server.listen(async function(){
+	
+	// Create db connection
+	var database = new Database();
+	await database.connect('intrasite');
+	await scheme.verifyDatabase(database); // check/create tables
+
+	router.intrasite = {
+		_db:	database,
+		info: 	info.router
+	}
+
 	// START STATIC WEB SERVER
 	var testUrl   = "http://localhost:"+server.config.PORT+"/doc/index.html";
 	console.log("Open the next URL for test:\n"+testUrl);
