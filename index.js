@@ -24,15 +24,13 @@ var books = [
 //-------------------------------------------------------------------------------------------------
 // CREATE & CONFIG API SERVER
 var router = {
-	$title: "The router example",
-	h_get:{
-		title:"Info",
-		descr:"Public information about the API-server",
-		action: function(r){
-			//throw new ApiError(405,"api error"); 
-			r.server.endWithSuccess(r, {message:"API server base info"});
-		}
-	},
+	$title: "Public WEB server",
+	$descr: "Put intrasite-react/build here",
+	_files:	__dirname+'/build/',
+	_default:'index.html',
+	_404:	 'index.html', // for React router
+	h_get: 	opuntia.files.get,
+
 	// The router
 	router: {
 		$title: "Rourer",
@@ -47,84 +45,9 @@ var router = {
 		_default:'index.html',
 		h_get: 	opuntia.files.get
 	},
-	// WEB API server
-	books: {	
-		$title: "Books",
-		$descr: "The sample WEB API server",
-		//_database:	mongo.db("books"),
-		//_auth:		opuntia.auth,
-		h_get:{
-			title:"Info",
-			descr:"Public information about Books",
-			action: function(r){r.server.endWithSuccess(r, {message:"Books API public description"});}
-		},
-		list:{
-			h_get:{
-				title:"list",
-				descr:"Get the books list",
-				action: function(r){r.server.endWithSuccess(r, books);}
-			}			
-		},
-		book:{
-			h_get:{
-				title:"Get",
-				descr:"Get the book by the index (0-based)",
-				pathParams:1,//one path parameters
-				action: function(r){
-					// Check parameters
-					var index = r.path.segments[r.path.segments.length-1];
-					var book  = books[index];
-					if(!book){r.server.endWithErrorCode(r, 404, 'index "'+index+'" not found');return;}
-					r.server.endWithSuccess(r, book);
-				}
-			},
-			h_post:{
-				title:"Post",
-				descr:"Add a book into the list",
-				requestBodyType: "json",
-				testBody:{author:"Gomer", name:"Odissea"},
-				action: function(r){
-					var book = r.data;
-					// Verify data
-					if(!book){r.server.endWithError(r,"book data is undefined"); return;}
-					if(!book.author || !book.name){r.server.endWithError(r,"a book must contain 'author' and 'name' fields"); return;}
-					var len = books.push(book);
-					r.server.endWithSuccess(r, {index:len-1});
-				}
-			},
-			h_put:{
-				title:"Put",
-				descr:"Update a book by the index",
-				pathParams:1,//one path parameters
-				requestBodyType: "json",
-				testBody:{author:"Gomer", name:"Iliada"},
-				action: function(r){
-					var book = r.data;
-					// Check index
-					var index = r.path.segments[r.path.segments.length-1];
-					if(!books[index]){r.server.endWithErrorCode(r, 404, 'index "'+index+'" not found');return;}
-					// Verify data
-					if(!book){r.server.endWithError(r,"book data is undefined"); return;}
-					if(!book.author || !book.name){r.server.endWithError(r,"a book must contain 'author' and 'name' fields"); return;}
-					// Update 
-					books[index] = book;
-					r.server.endWithSuccess(r, {index:index});
-				}
-			},
-			h_delete:{
-				title:"Delete",
-				descr:"Delete a book by index.",
-				pathParams:1,//one path parameters
-				action: function(r){
-					// Check index
-					var index = r.path.segments[r.path.segments.length-1];
-					if(!books[index]){r.server.endWithErrorCode(r, 404, 'index "'+index+'" not found');return;}
-					// Delete
-					books[index] = null;
-					r.server.endWithSuccess(r, {index:index});
-				}
-			}
-		}
+	api:{
+		_db  : null,// a database must be here
+		info : 	info.router
 	}
 };
 
@@ -140,13 +63,9 @@ server.listen(async function(){
 	var database = new Database();
 	await database.connect('intrasite');
 	await scheme.verifyDatabase(database); // check/create tables
-
-	router.intrasite = {
-		_db:	database,
-		info: 	info.router
-	}
+	router.api._db = database
 
 	// START STATIC WEB SERVER
-	var testUrl   = "http://localhost:"+server.config.PORT+"/doc/index.html";
+	var testUrl   = "http://localhost:"+server.config.PORT+"/doc";
 	console.log("Open the next URL for test:\n"+testUrl);
 });
