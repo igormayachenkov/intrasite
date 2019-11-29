@@ -2,8 +2,9 @@
 const opuntia = require("opuntia");
 const ApiError = opuntia.error.ApiError;
 const Database  = require("./database.js");
-const info  	= require("./info.js");
 const scheme    = require("./scheme.js");
+const info  	= require("./info.js");
+const people  	= require("./people.js");
 
 
 global.config = {
@@ -46,8 +47,9 @@ var router = {
 		h_get: 	opuntia.files.get
 	},
 	api:{
-		_db  : null,// a database must be here
-		info : 	info.router
+		_db    : null,// a database must be here
+		info   : info.router,
+		people : people.router
 	}
 };
 
