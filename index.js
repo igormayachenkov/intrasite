@@ -16,6 +16,9 @@ global.config = {
 	}
 };
 
+var PORT = process.argv[2];
+if(!PORT) PORT = 80
+
 //-------------------------------------------------------------------------------------------------
 // DATA
 var books = [
@@ -58,7 +61,7 @@ var router = {
 // CREATE & START API SERVER
 var server = new opuntia.Server(router, {
 		PROTOCOL   	: 'http:',
-		PORT       	: 8080 // DEVELOPMENT
+		PORT       	: PORT//8080 // DEVELOPMENT
 		//PORT       	: 80 // PRDUCTION
 	}
 );

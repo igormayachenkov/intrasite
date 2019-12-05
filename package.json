@@ -15,6 +15,7 @@
   },
   "directories": {},
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "node index.js 8080"
   }
 }
