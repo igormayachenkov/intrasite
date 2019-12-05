@@ -1,7 +1,7 @@
 {
   "name": "intrasite",
-  "version": "1.0.0+2019.11.27",
-  "description": "The opuntia framework test.",
+  "version": "1.0.0+2019.12.05",
+  "description": "A company internal site.",
   "main": "index.js",
   "repository": {
     "type": "git",

@@ -1,19 +1,10 @@
 "use strict"
 //---------------------------------------------------------
-const id          = 'id BIGINT NOT NULL';
-const time        = 'time BIGINT NOT NULL';
-const _mt         = '_mt BIGINT NOT NULL';
-const primary_key = 'PRIMARY KEY (id,time)';
 var schemes = {
-    'positions': 'id INT NOT NULL, name VARCHAR(100) NOT NULL, PRIMARY KEY(id)',
-    'people'   : 'id INT NOT NULL, name VARCHAR(150) NOT NULL, position INT, PRIMARY KEY(id)'
-}
-const populate = {
-    'positions' : ['1, "sysadmin"',
-                   '2, "programmer"'],
-    'people'    : ['1, "Ivanov", 1',
-                   '2, "Petrov", 2',
-                   '3, "Sidorov",2']
+    'positions': {},
+    'people'   : {},
+    'devices'  : {},
+    'owners'   : {}
 }
 
 //------------------------------------------------------------------
@@ -24,19 +15,8 @@ exports.verifyDatabase = async function(db){
         if(tables[name]){
             console.log('    '+name+': ',tables[name]);
         }else{
-            let sqlCreate = 'CREATE TABLE '+name+' ('+schemes[name]+')';
-            console.log('*** mysql> '+sqlCreate);
-            await db.query(sqlCreate);
-            // Populate 
-            let popList = populate[name];
-            if(popList)
-                popList.forEach((data)=>{
-                    let sqlInsert = 'INSERT INTO  '+name+' VALUES('+data+')';
-                    console.log('*** mysql> '+sqlInsert);
-                    db.query(sqlInsert);
-                })
+            throw 'The table "'+name+'" is not found';
         }
-            
     }
 }
 const tableStatus = async function(db){

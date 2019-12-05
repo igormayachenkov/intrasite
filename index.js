@@ -5,6 +5,7 @@ const Database  = require("./database.js");
 const scheme    = require("./scheme.js");
 const info  	= require("./info.js");
 const people  	= require("./people.js");
+const devices  	= require("./devices.js");
 
 
 global.config = {
@@ -49,15 +50,16 @@ var router = {
 	api:{
 		_db    : null,// a database must be here
 		info   : info.router,
-		people : people.router
+		people : people.router,
+		devices: devices.router
 	}
 };
 
 // CREATE & START API SERVER
 var server = new opuntia.Server(router, {
 		PROTOCOL   	: 'http:',
-		//PORT       	: 8080 // DEVELOPMENT
-		PORT       	: 80 // PRDUCTION
+		PORT       	: 8080 // DEVELOPMENT
+		//PORT       	: 80 // PRDUCTION
 	}
 );
 server.listen(async function(){
