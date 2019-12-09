@@ -54,7 +54,13 @@ var router = {
 		_db    : null,// a database must be here
 		info   : info.router,
 		people : people.router,
-		devices: devices.router
+		devices: devices.router,
+		photos : { 
+			$title: "Photos",
+			$descr: "People photos",
+			_files: __dirname+'/photos/',
+			h_get: 	opuntia.files.get
+		}
 	}
 };
 
