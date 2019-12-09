@@ -61,6 +61,12 @@ var router = {
 			_files: __dirname+'/photos/',
 			h_get: 	opuntia.files.get
 		}
+	},
+	files:{
+		$title: "Files",
+		$descr: "Photos and documents",
+		_files: __dirname+'/files/',
+		h_get: 	opuntia.files.get
 	}
 };
 
