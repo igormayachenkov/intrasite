@@ -44,6 +44,22 @@ INSERT INTO `devices` VALUES (157,'Телефон Google HTC Nexus One','Ори�
 UNLOCK TABLES;
 
 --
+-- Table structure for table `gallery_folders`
+--
+
+DROP TABLE IF EXISTS `gallery_folders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `gallery_folders` (
+  `name` varchar(255) COLLATE utf8_bin NOT NULL,
+  `title` varchar(255) COLLATE utf8_bin NOT NULL,
+  `cover` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `descr` text COLLATE utf8_bin,
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `owners`
 --
 

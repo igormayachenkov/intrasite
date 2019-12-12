@@ -6,6 +6,7 @@ const scheme    = require("./scheme.js");
 const info  	= require("./info.js");
 const people  	= require("./people.js");
 const devices  	= require("./devices.js");
+const gallery  	= require("./gallery.js");
 
 
 global.config = {
@@ -55,12 +56,7 @@ var router = {
 		info   : info.router,
 		people : people.router,
 		devices: devices.router,
-		photos : { 
-			$title: "Photos",
-			$descr: "People photos",
-			_files: __dirname+'/photos/',
-			h_get: 	opuntia.files.get
-		}
+		gallery: gallery.router
 	},
 	files:{
 		$title: "Files",
