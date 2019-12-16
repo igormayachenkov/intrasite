@@ -17,25 +17,18 @@ global.config = {
 	}
 };
 
-var PORT = process.argv[2];
-if(!PORT) PORT = 80
-
-//-------------------------------------------------------------------------------------------------
-// DATA
-var books = [
-	{author:"Leo Tolstoy", name: "War and Peace"},
-	{author:"William Shakespeare", name: "The Tragedy of Hamlet, Prince of Denmark" }
-];
+// var PORT = process.argv[2];
+// if(!PORT) PORT = 80
 
 //-------------------------------------------------------------------------------------------------
 // CREATE & CONFIG API SERVER
 var router = {
-	$title: "Public WEB server",
-	$descr: "Put intrasite-react/build here",
-	_files:	__dirname+'/build/',
-	_default:'index.html',
-	_404:	 'index.html', // for React router
-	h_get: 	opuntia.files.get,
+	// $title: "Public WEB server",
+	// $descr: "Put intrasite-react/build here",
+	// _files:	__dirname+'/build/',
+	// _default:'index.html',
+	// _404:	 'index.html', // for React router
+	// h_get: 	opuntia.files.get,
 
 	// The router
 	router: {
@@ -69,8 +62,7 @@ var router = {
 // CREATE & START API SERVER
 var server = new opuntia.Server(router, {
 		PROTOCOL   	: 'http:',
-		PORT       	: PORT//8080 // DEVELOPMENT
-		//PORT       	: 80 // PRDUCTION
+		PORT       	: 8080
 	}
 );
 server.listen(async function(){
