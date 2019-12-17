@@ -15,7 +15,6 @@
   },
   "directories": {},
   "scripts": {
-    "start": "node index.js",
-    "dev": "node index.js dev"
+    "start": "node index.js"
   }
 }

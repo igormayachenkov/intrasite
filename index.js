@@ -77,10 +77,8 @@ const startServer = (protocol, port, options)=>{
 
 // CREATE & START API SERVER
 // Release or Development?
-if(process.argv[2]=='dev'){
-	console.log('DEVELOPMENT MODE')
-	startServer('http:', 8080, null)
-}else{
+var passphrase = process.argv[2]
+if(passphrase){
 	// RELEASE
 	// Load config
 	const config = require("./config.js");
@@ -89,23 +87,22 @@ if(process.argv[2]=='dev'){
 
 	// Load certificates from files
 	var options = {
+		passphrase:passphrase,
 		key:  fs.readFileSync(config.HTTPS_KEY), //'private-key.pem'),
 		cert: fs.readFileSync(config.HTTPS_CRT)  //'certificate.pem')
 	};
 	if(config.HTTPS_CA)
 		options.ca = fs.readFileSync(config.HTTPS_CA)
-	
-	// Input the pathphrase	
-	var readline = require('readline');// https://nodejs.org/api/readline.html
-	var rl = readline.createInterface({
-		input : process.stdin,
-		output: process.stdout
-	});
-	console.log('Input the RSA-key passphrase:');
-	rl.on('line', function(line){
-		rl.close();
-		// Start server
-		options.passphrase = line;
-		startServer('https:', 8080, options)
-	})
+
+	// var options = {
+	// 	key:  fs.readFileSync("/home/igor/RESEARCH/certs/self/self.key"),
+	// 	cert: fs.readFileSync("/home/igor/RESEARCH/certs/self/self.crt"),
+	// 	passphrase: passphrase //"qwerty"
+	// }
+		
+	// Start server
+	startServer('https:', 443, options)
+}else{
+	console.log('DEVELOPMENT MODE')
+	startServer('http:', 8080, null)
 }
