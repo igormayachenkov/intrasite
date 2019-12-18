@@ -9,32 +9,37 @@ const people  	= require("./people.js");
 const devices  	= require("./devices.js");
 const gallery  	= require("./gallery.js");
 
-
-global.config = {
-	DATABASE : {  
-		host: 	  "localhost",
-		user: 	  "root",
-		password: "223322" 
-	}
-};
+// Production or Development?
+const passphrase = process.env.PASSPHRASE; //process.argv[2];
+const isProduction = passphrase?true:false;
 
 //-------------------------------------------------------------------------------------------------
-// CREATE & CONFIG API SERVER
+// LOAD CONFIG
+if(isProduction){
+	console.log('process.pid: ',process.pid);
+	global.config = require("./config.js");
+}else{
+	global.config = require("./config-dev.js");
+}
+
+//-------------------------------------------------------------------------------------------------
+// CREATE ROUTER
 var router = {
-	$title: "Public WEB server",
+	// Frontend WEB-server
+	$title: "Frontend WEB-server",
 	$descr: "Put intrasite-react/build here",
-	_files:	__dirname+'/build/',
+	_files:	config.DIR_FRONTEND,
 	_default:'index.html',
 	_404:	 'index.html', // for React router
 	h_get: 	opuntia.files.get,
 
-	// The router
+	// The router (for documentation server)
 	router: {
 		$title: "Rourer",
 		$descr: "The endpoint to load the router for documentation tool",
 		h_get : opuntia.Server.getRouterHandler()
 	},
-	// HTML server
+	// Documentation&Test WEB-server
 	doc: 	{
 		$title: "Documentation HTML-server",
 		$descr: "To load static content",
@@ -42,6 +47,7 @@ var router = {
 		_default:'index.html',
 		h_get: 	opuntia.files.get
 	},
+	// API
 	api:{
 		_db    : null,// a database must be here
 		info   : info.router,
@@ -49,10 +55,11 @@ var router = {
 		devices: devices.router,
 		gallery: gallery.router
 	},
+	// Files WEB-server
 	files:{
-		$title: "Files",
+		$title: "Files WEB server",
 		$descr: "Photos and documents",
-		_files: __dirname+'/files/',
+		_files: config.DIR_FILES,
 		h_get: 	opuntia.files.get
 	}
 };
@@ -76,24 +83,20 @@ const startServer = (protocol, port, options)=>{
 }
 
 // CREATE & START API SERVER
-// Release or Development?
-var passphrase = process.argv[2]
-if(passphrase){
-	// RELEASE
-	// Load config
-	const config = require("./config.js");
+if(isProduction){
+	// Production
 	if(!config.HTTPS_KEY || !config.HTTPS_CRT) 
 		throw 'Error: config.HTTPS_KEY or config.HTTPS_CRT is undefined';
-
 	// Load certificates from files
 	var options = {
 		passphrase:passphrase,
-		key:  fs.readFileSync(config.HTTPS_KEY), //'private-key.pem'),
-		cert: fs.readFileSync(config.HTTPS_CRT)  //'certificate.pem')
+		key:  fs.readFileSync(config.HTTPS_KEY), 
+		cert: fs.readFileSync(config.HTTPS_CRT)  
 	};
 	if(config.HTTPS_CA)
 		options.ca = fs.readFileSync(config.HTTPS_CA)
 
+	// To check production mode locally
 	// var options = {
 	// 	key:  fs.readFileSync("/home/igor/RESEARCH/certs/self/self.key"),
 	// 	cert: fs.readFileSync("/home/igor/RESEARCH/certs/self/self.crt"),

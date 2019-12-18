@@ -1,5 +1,9 @@
 package-lock.json
 
+intrasite.log
+intrasite.err
+intrasite.pid
+
 # Logs
 logs
 *.log
