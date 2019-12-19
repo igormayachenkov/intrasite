@@ -2,7 +2,7 @@
 const fs 		= require("fs");
 const opuntia 	= require("opuntia");
 const ApiError 	= opuntia.error.ApiError;
-const Database  = require("./database.js");
+const Database  = require("./database.js").Database;
 const scheme    = require("./scheme.js");
 const info  	= require("./info.js");
 const people  	= require("./people.js");
@@ -70,11 +70,18 @@ const startServer = (protocol, port, options)=>{
 		PORT       	: port
 	});
 	server.start(options, async function(){
-		// Create db connection
-		var database = new Database();
-		await database.connect('intrasite');
-		await scheme.verifyDatabase(database); // check/create tables
+		// Create database
+		if(!config.DATABASE.database)
+			config.DATABASE.database = 'intrasite'
+		var database = new Database(config.DATABASE);
 		router.api._db = database
+
+		// Verify database
+		try{
+			await scheme.verifyDatabase(database); // check/create tables
+		}catch(err){
+			console.log(err);
+		}
 
 		// START STATIC WEB SERVER
 		var testUrl   = protocol+"//localhost:"+server.config.PORT+"/doc";

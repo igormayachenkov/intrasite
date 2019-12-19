@@ -2,27 +2,32 @@
 
 const mysql = require('mysql');
 
-module.exports = class Database {
-    constructor(connection){
-		this.connection = connection;
-    }
-    async connect(databaseName){
-        this.connection = await connect(databaseName);
+//------------------------------------------------------------------------------
+// DATABASE wit connection pooling
+// options:
+//      host
+//      user
+//      password
+//      database
+class Database {
+    constructor(options){
+        this.options = options
+        this.pool = mysql.createPool(options);
     }
     disconnect(){
-        if(this.connection)
-            this.connection.destroy();
+        this.pool.end();
     }
+
     getDatabaseName(){
-        return (this.connection && this.connection.config)?this.connection.config.database:null;
+        return this.pool.config.connectionConfig.database;
     }
 
     // MySQL connection.query wrapped in Promise
     // return: results 
     async query(sql){
-        const m = this;
+        const pool = this.pool;
         return new Promise(function(resolve,reject){
-            m.connection.query(sql, function (error, results, fields) {
+            pool.query(sql, function (error, results, fields) {
                 if(error) reject(error);
                 else resolve(results);
             });
@@ -30,81 +35,63 @@ module.exports = class Database {
     }
     // return: results + fields
     async queryWithFields(sql){
-        const m = this;
+        const pool = this.pool;
         return new Promise(function(resolve,reject){
-            m.connection.query(sql, function (error, results, fields) {
+            pool.query(sql, function (error, results, fields) {
                 if(error) reject(error);
                 else resolve({results:results, fields:fields});
             });
         });
     }
     
+    // returns the transaction object
     async startTransaction(){
-        const m = this;
+        const pool = this.pool;
         return new Promise(function(resolve,reject){
-            m.connection.beginTransaction(function (error) {
-                if(error) reject(error);
-                else resolve();
+            pool.getConnection(function(err, connection) {
+                if(err) reject(err);
+                else connection.beginTransaction(function (error) {
+                    if(error){
+                        connection.release();
+                        reject(error);
+                    }
+                    else resolve(new Transaction(connection));
+                });
             });
         });
     }
+}
+
+//------------------------------------------------------------------------------
+// TRANSACTION
+// the connection must be:
+//      - selected from the pool 
+//      - withs started transaction
+class Transaction {
+    constructor(connection){
+        this.connection = connection;
+    }
     async commit(){
-        const m = this;
+        const connection = this.connection;
         return new Promise(function(resolve,reject){
-            m.connection.commit(function (error) {
+            connection.commit(function (error) {
+                connection.release();
                 if(error) reject(error);
                 else resolve();
             });
         });
     }
     async rollback(){
-        const m = this;
+        const connection = this.connection;
         return new Promise(function(resolve,reject){
-            m.connection.rollback(function () {
+            connection.rollback(function () {
+                connection.release();
                 resolve();
             });
         });
     }
 }
 
-//---------------------------------------------------------
-// CONNECT TO THE DATABASE
-// Create the database in need
-// uses:     
-//      global.config.DATABASE
-const connect = async function(database){
-    return new Promise(async function(resolve, reject){
-    // Copy database parameters
-    let param = {};
-    for(const key in config.DATABASE)
-        param[key] = config.DATABASE[key];
-    //param.database = database; 
-    
-    // Create db connection
-    var connection = mysql.createConnection(param);
-        connection.connect(function (error) {
-            if (error) reject(error);
-            else{       
-                // Select database
-                connection.config.database = database;
-                let sqlUse = 'USE '+database
-                connection.query(sqlUse, function (error) {
-                    if(error){
-                        if(error.code=='ER_BAD_DB_ERROR'){
-                            let sqlCreate = 'CREATE DATABASE '+database+" character set UTF8 collate utf8_bin";
-                            console.log('*** mysql> '+sqlCreate);
-                            connection.query(sqlCreate, function (error, results, fields) {
-                                if(error) reject(error);
-                                else connection.query(sqlUse, function (error, results, fields) {
-                                    if (error) reject(error);
-                                    else resolve(connection);
-                                });
-                            });
-                        }else reject(error);
-                    }else resolve(connection);
-                });
-            }
-        });
-    });
-}
 
+exports.Database = Database;
+exports.Transaction = Transaction;
