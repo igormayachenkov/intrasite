@@ -139,6 +139,24 @@ LOCK TABLES `positions` WRITE;
 INSERT INTO `positions` VALUES (1,'Office Manager','administration'),(2,'Chief Accountant','administration'),(3,'System Administrator','administration'),(4,'Administrative Assistant','administration'),(10,'Team Leader','developers'),(11,'Expert Researcher','developers'),(12,'Qualified Developer','developers'),(13,'Junior Developer','developers'),(21,'Senior Test Engineer','testers'),(22,'Test Engineer','testers'),(14,'Graphic Designer','developers'),(5,'Accountant','administration');
 /*!40000 ALTER TABLE `positions` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+--
+-- Table structure for table `sessions`
+--
+
+DROP TABLE IF EXISTS `sessions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sessions` (
+  `token` VARCHAR(32), 
+  `user`  VARCHAR(255), 
+  `time`  BIGINT, 
+  PRIMARY KEY (`token`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COMMENT='Auth sessions';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

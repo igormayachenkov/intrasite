@@ -8,6 +8,8 @@ const info  	= require("./info.js");
 const people  	= require("./people.js");
 const devices  	= require("./devices.js");
 const gallery  	= require("./gallery.js");
+const auth      = require("./auth.js");
+
 
 // Production or Development?
 const passphrase = process.env.PASSPHRASE; //process.argv[2];
@@ -50,10 +52,15 @@ var router = {
 	// API
 	api:{
 		_db    : null,// a database must be here
-		info   : info.router,
 		people : people.router,
 		devices: devices.router,
-		gallery: gallery.router
+		gallery: gallery.router,
+		private:{
+			_auth   : auth,
+			login   : auth.router.login,		
+			logout  : auth.router.logout,		
+			database: info.router.database
+		}
 	},
 	// Files WEB-server
 	files:{
@@ -80,7 +87,8 @@ const startServer = (protocol, port, options)=>{
 		try{
 			await scheme.verifyDatabase(database); // check/create tables
 		}catch(err){
-			console.log(err);
+			console.error("DATABASE TEST ERROR:",err);
+			
 		}
 
 		// START STATIC WEB SERVER

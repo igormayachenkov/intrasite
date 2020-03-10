@@ -4,7 +4,8 @@ var schemes = {
     'positions': {},
     'people'   : {},
     'devices'  : {},
-    'owners'   : {}
+    'owners'   : {},
+    'sessions' : {}
 }
 
 //------------------------------------------------------------------
