@@ -70,7 +70,7 @@ var login = async function(r){
 	let email 	 = verifyLogin(r.data.email);
 	let password = verifyPassword(r.data.password);
 
-    if(email!='olga') throw new ApiError(401, "Authorization failed"); // Authorization failed
+    if(email!='olga.sergeeva@hiq.ru') throw new ApiError(401, "Authorization failed"); // Authorization failed
 
     // Find an object with the 'auth' property by login
     // let sql = 'SELECT * FROM auth WHERE login="'+login+'"';
