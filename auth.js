@@ -7,7 +7,21 @@ const cookie 	= require('cookie');
 const crypto 	= require('crypto');
 const opuntia 	= require('opuntia');
 const ApiError 	= opuntia.error.ApiError;
-const scheme 	= require("./scheme.js");
+
+//--------------------------------------------------------------------
+// ActiveDirectory (LDAP)
+var ActiveDirectory = require('activedirectory2');
+var config = { url: 'ldap://ldap.hiq.ru',
+               baseDN: 'dc=hiq,dc=ru' };
+var ad = new ActiveDirectory(config);
+var authenticate = async function(username,password){
+    return new Promise(function(resolve,reject){
+        ad.authenticate(username, password, function(err, auth) {
+            if (!err && auth) resolve(auth);
+            else reject(new ApiError(401, 'Authentication failed!'));
+        });
+    });
+}
 
 //----------------------------------------------------------------------------
 // SETTINGS
@@ -25,16 +39,7 @@ var checkAuthorized = async function(r){
 	// Read token from cookie
 	var token = null;
 	if(r.request.headers.cookie) {
-		//token = cookie.parse(r.request.headers.cookie)[settings.COOKIE_NAME];
 		token = cookie.parse(r.request.headers.cookie)[settings.COOKIE_NAME];
-		// var cookies = r.request.headers.cookie.split(';');
-		// for(var i=0; i<cookies.length; i++){
-		// 	var cookie = cookies[i];
-		// 	if(cookie.indexOf(settings.COOKIE_NAME+"=")>=0){
-		// 		token = cookie.slice(cookie.indexOf("=")+1);
-		// 		break;
-		// 	}
-		// }
 	}
 
 	// VERIFY SESSION & DO NEXT WORK
@@ -70,26 +75,10 @@ var login = async function(r){
 	let email 	 = verifyLogin(r.data.email);
 	let password = verifyPassword(r.data.password);
 
-    if(email!='olga.sergeeva@hiq.ru') throw new ApiError(401, "Authorization failed"); // Authorization failed
+    //if(email!='olga.sergeeva@hiq.ru') throw new ApiError(401, "Authorization failed"); // Authorization failed
 
-    // Find an object with the 'auth' property by login
-    // let sql = 'SELECT * FROM auth WHERE login="'+login+'"';
-    // let results = await db.query(sql);
-    // let auth = results[0];
-    // console.log("auth: ",auth);
-    // if(!auth) throw new ApiError(401, "login not found"); // Authorization failed
-
-	// VERIFY PASSWORD
-	// if(!auth.salt){
-	// 	// Old variant with open text passwords
-	// 	if(auth.password !== password)
-	// 		throw "Authorization failed";
-	//  }else{
-	// 	// Hashed password
-	// 	var encrypted = encryptPassword(password, auth.salt);
-	// 	if(auth.password !== encrypted)
-	// 		throw "Authorization failed";
-	// }
+    // Authenticate!
+    await authenticate(email, password);
 	
 	// CREATE property 'SESSION' for the object
 	// Prepare data,
@@ -149,7 +138,7 @@ exports.router =	{
 	login: {
 		h_post:{
 			title: "Authenticate with email/password",
-			testBody: {email:"root", password:"root"},
+			testBody: {email:"igor.mayachenkov@hiq.ru", password:"qwerty"},
 			requestBodyType: "json",
 			skipAuth:true, 
 			action: login 
