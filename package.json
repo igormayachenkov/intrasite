@@ -1,6 +1,6 @@
 {
   "name": "intrasite",
-  "version": "1.0.0+2019.03.10",
+  "version": "1.0.0+2019.03.11",
   "description": "A company internal site.",
   "main": "index.js",
   "repository": {
