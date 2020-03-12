@@ -36,10 +36,16 @@ var settings={
 // To be called by opuntia framework
 var checkAuthorized = async function(r){
 
-	// Read token from cookie
 	var token = null;
-	if(r.request.headers.cookie) {
-		token = cookie.parse(r.request.headers.cookie)[settings.COOKIE_NAME];
+	
+	// Try to read token from the custom header
+	token = r.request.headers[settings.COOKIE_NAME];
+
+	// Try to read token from cookies
+	if(!token){
+		if(r.request.headers.cookie) {
+			token = cookie.parse(r.request.headers.cookie)[settings.COOKIE_NAME];
+		}
 	}
 
 	// VERIFY SESSION & DO NEXT WORK

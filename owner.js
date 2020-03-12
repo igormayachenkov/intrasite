@@ -29,7 +29,7 @@ var setOwner = async function(r){
 exports.router =	{
 	setOwner: {
 		h_post:{
-			title: "Set/clear owner for a device",
+			title: "Set/clear owner for a device (token could be defined in 'token' header(1-st priority) or in 'token' cookie)",
 			testBody: {device_id:1, user_id:null},
 			requestBodyType: "json",
 			action: setOwner 
