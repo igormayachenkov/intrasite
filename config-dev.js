@@ -1,10 +1,13 @@
 // DEVELOPMENT MODE CONFIG
 module.exports = {
-    // Local dirs
-	DIR_FRONTEND: '/Users/jenkins/intrasite/frontend/',
-    DIR_FILES	: '/Users/jenkins/intrasite/files/',
+    // Jenkins test dirs
+	DIR_FRONTEND: '/Users/jenkins/intrasite/frontend/build/',
+	DIR_FILES	: '/Users/jenkins/intrasite/files/',
+	
+	// Local dirs
 	//DIR_FRONTEND: '/home/igor/PROJECTS/intrasite/build/',
-    //DIR_FILES	: '/home/igor/PROJECTS/intrasite/files/',
+	//DIR_FILES	: '/home/igor/PROJECTS/intrasite/files/',
+	
     // Database
 	DATABASE : {  
 		host: 	  "localhost",

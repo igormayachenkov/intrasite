@@ -9,6 +9,7 @@ const people  	= require("./people.js");
 const devices  	= require("./devices.js");
 const gallery  	= require("./gallery.js");
 const auth      = require("./auth.js");
+const owner     = require("./owner.js");
 
 
 // Production or Development?
@@ -59,6 +60,7 @@ var router = {
 			_auth   : auth,
 			login   : auth.router.login,		
 			logout  : auth.router.logout,		
+			setOwner: owner.router.setOwner,		
 			database: info.router.database
 		}
 	},
